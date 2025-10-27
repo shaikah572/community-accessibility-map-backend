@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import *
 from .serializers import *
 
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -36,3 +37,16 @@ class CategoryIndex(APIView):
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
+class CategoryDetail(APIView):
+
+    def get(self, request, category_id):
+        try: 
+            queryset = get_object_or_404(Category, id=category_id)
+            serializers = CategorySerializer(queryset)
+
+            return Response(serializers.data, status=status.HTTP_200_OK)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
