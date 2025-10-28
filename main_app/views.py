@@ -104,7 +104,50 @@ class MarkerIndex(APIView):
         
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
+       
+class MarkerDetail(APIView):
+
+    def get(self, request, marker_id):
+        try:
+            queryset = get_object_or_404(Marker, id=marker_id)
+            serializer = MarkerSerializer(queryset)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def put(self, request, marker_id):
+        try:
+            queryset = get_object_or_404(Marker, id=marker_id)
+            serializer = MarkerSerializer(queryset, data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, marker_id):
+        try:
+            queryset = get_object_or_404(Marker, id=marker_id)
+            queryset.delete()
+
+            return Response(
+                {'message': f'Marker {marker_id} has been delete.'},
+                status=status.HTTP_204_NO_CONTENT)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+        
           
         
