@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import *
 from .serializers import *
@@ -180,6 +180,8 @@ class CommentIndex(APIView):
         
 
 class CommentDelete(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, marker_id, comment_id):
         try:
