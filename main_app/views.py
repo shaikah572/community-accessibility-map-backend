@@ -71,7 +71,7 @@ class CategoryDetail(APIView):
             queryset.delete()
 
             return Response(
-                {'message': f'Category {category_id} has been delete.'},
+                {'message': f'Category {category_id} has been deleted.'},
                 status=status.HTTP_204_NO_CONTENT)
         
         except Exception as error:
@@ -138,15 +138,67 @@ class MarkerDetail(APIView):
             queryset.delete()
 
             return Response(
-                {'message': f'Marker {marker_id} has been delete.'},
+                {'message': f'Marker {marker_id} has been deleted.'},
                 status=status.HTTP_204_NO_CONTENT)
         
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# ----------
+
+
+# ------ Comment requests
+class CommentIndex(APIView):
+
+    def get(self, request, marker_id):
+        try:
+            queryset = Comment.objects.filter(marker=marker_id)
+            serializer = CommentSerializer(queryset, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def post(self, request, marker_id):
+        try:
+            serializer = CommentSerializer(data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                queryset = Comment.objects.filter(marker=marker_id)
+                serializer = CommentSerializer(queryset, many=True)
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class CommentDelete(APIView):
+
+    def delete(self, request, marker_id, comment_id):
+        try:
+            queryset = get_object_or_404(Comment, id=comment_id, marker=marker_id)
+            queryset.delete()
+
+            return Response(
+                {'message': f'comment {comment_id} has been deleted'},
+                status=status.HTTP_204_NO_CONTENT)
+        
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# ----------
 
 
 
 
+
+
+
+        
+    
 
         
           
