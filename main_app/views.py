@@ -1,7 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly, 
+    IsAuthenticated, 
+    IsAdminUser,
+    AllowAny )
 
 from .models import *
 from .serializers import *
@@ -108,6 +112,13 @@ class MarkerIndex(APIView):
 
        
 class MarkerDetail(APIView):
+    # stackoverflow > "How to set different permission_classes for GET and POST requests using the same URL?"
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
 
     def get(self, request, marker_id):
         try:
