@@ -20,20 +20,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class MarkerSerializer(serializers.ModelSerializer):
 
-    category = serializers.CharField(read_only=True, source='category.name')
+    category_name = serializers.CharField(read_only=True, source='category.name')
 
     class Meta:
         model = Marker
         fields = '__all__'
-        read_only_fields = ['created_by']
+        # read_only_fields = ['created_by']
 
 
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    marker = serializers.CharField(read_only=True, source='marker.name')
+    marker_name = serializers.CharField(read_only=True, source='marker.name')
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ['created_by']
+        # read_only_fields = ['created_by']
