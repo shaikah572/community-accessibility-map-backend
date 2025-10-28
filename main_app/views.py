@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import *
 from .serializers import *
@@ -149,6 +150,8 @@ class MarkerDetail(APIView):
 # ------ Comment requests
 class CommentIndex(APIView):
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request, marker_id):
         try:
             queryset = Comment.objects.filter(marker=marker_id)
@@ -164,7 +167,7 @@ class CommentIndex(APIView):
             serializer = CommentSerializer(data=request.data)
 
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(created_by = request.user, marker_id=marker_id)
                 queryset = Comment.objects.filter(marker=marker_id)
                 serializer = CommentSerializer(queryset, many=True)
 
