@@ -20,7 +20,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class MarkerSerializer(serializers.ModelSerializer):
 
-    category_name = serializers.CharField(read_only=True, source='category.name')
+    category = CategorySerializer(read_only=True)
 
     class Meta:
         model = Marker
