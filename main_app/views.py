@@ -66,6 +66,13 @@ class UserDelete(APIView):
 # ------ Category views
 class CategoryIndex(APIView):
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
     def get(self, request):
         try:
             queryset = Category.objects.all()
@@ -93,6 +100,8 @@ class CategoryIndex(APIView):
 
 class CategoryDetail(APIView):
 
+    permission_classes = [IsAdminUser]
+    
     def get(self, request, category_id):
         try: 
             queryset = get_object_or_404(Category, id=category_id)
@@ -164,6 +173,7 @@ class MarkerIndex(APIView):
        
 class MarkerDetail(APIView):
     # stackoverflow > "How to set different permission_classes for GET and POST requests using the same URL?"
+    # change to only admin - there's no use of get marker
     def get_permissions(self):
         if self.request.method == 'GET':
             permission_classes = [AllowAny]

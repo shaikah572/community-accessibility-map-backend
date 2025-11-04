@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['id', 'username', 'email']
+        read_only_fields = ['id']
 
 
 
@@ -21,6 +22,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class MarkerSerializer(serializers.ModelSerializer):
 
     category = CategorySerializer(read_only=True)
+    category_id =serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source='category', write_only=True)
 
     class Meta:
         model = Marker
@@ -31,9 +33,9 @@ class MarkerSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    marker_name = serializers.CharField(read_only=True, source='marker.name')
+    marker = MarkerSerializer(read_only=True)
+    created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ['created_by', 'marker']
