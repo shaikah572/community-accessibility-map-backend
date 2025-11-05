@@ -1,0 +1,46 @@
+services:
+  communityaccessibilitymap:
+    image: postgres
+    container_name: communityaccessibilitymap
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: 
+      POSTGRES_DB: community_accessibility_map
+  
+  frontend:
+    build:
+      context: ../community-accessibility-map-frontend/
+      dockerfile: Dockerfile
+    container_name: "community_accessibility_map_frontend"
+    ports:
+      - "5173:5173" 
+    volumes:
+      - ../community-accessibility-map-frontend:/app 
+      - /app/node_modules 
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - communityaccessibilitymap
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_api
+    command: >
+      bash -c "
+              python manage.py makemigrations &&
+              python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/usr/src/backend/
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    depends_on:
+      - catcollectorspa
+volumes:
+  postgres_data:
